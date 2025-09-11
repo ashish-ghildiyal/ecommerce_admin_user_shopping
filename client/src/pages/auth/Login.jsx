@@ -1,7 +1,11 @@
 import CommonForm from '@/components/common/CommonForm'
 import { loginFormControl } from '@/config'
 import React, {useState} from 'react'
+import { useDispatch } from 'react-redux'
 import { Link } from 'react-router'
+import { loginUser } from '@/store/auth-slice'
+import { toast } from 'sonner'
+import { useNavigate } from 'react-router'
 
 const initialState ={
   email:'',
@@ -10,6 +14,28 @@ const initialState ={
 
 const Login = () => {
   const [formData, setFormData] = useState(initialState)
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const onSubmit = (e) =>{
+    e.preventDefault()
+    dispatch(loginUser(formData))
+    .then((data)=>{
+      console.log(data)
+     if(data.payload.success){
+      toast(data.payload.message,{
+        style: {
+          background:'green',
+          color:'white'
+        }
+      })
+      if(data.payload.user.role === 'admin'){
+        navigate('/admin/dashboard')
+      }else{
+        navigate('/shop/home')
+      }
+     }
+    })
+  }
   return (
     <div className='mx-auto w-full max-w-md space-y-6'>
       <div className='text-center'>
@@ -22,6 +48,7 @@ const Login = () => {
       formData={formData}
       setFormData={setFormData}
       ButtonText={'Login'}
+      onSubmit={onSubmit}
       />
     </div>
   )

@@ -15,13 +15,11 @@ import ProductListing from "./pages/shopping-view/ProductListing"
 import CheckAuth from "./components/common/CheckAuth"
 import PageNotFound from "./pages/PageNotFound"
 import UnAuthorized from "./pages/unauth-page/UnAuthorized"
+import { useSelector } from "react-redux"
 
 function App() {
-  const isAuthenticated = false;
-  const user = {
-    name:'ashish',
-    role: 'admin'
-  }
+
+  const {isAuthenticated, user} = useSelector(state=>state.auth)
 
   return (
     <div className="flex flex-col overflow-hidden bg-white">

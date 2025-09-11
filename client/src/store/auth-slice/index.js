@@ -20,10 +20,40 @@ export const registerUser = createAsyncThunk(
         })
         return response.data
             }catch(error){
-                toast(error.response.data.message)
+                toast(error.response.data.message,{
+                    style: {
+                      border:'1px solid red',  
+                      background:'red',
+                      color:'white'
+                    }
+                  })
                 return rejectWithValue(error.response.data);
         }
     })
+
+export const loginUser = createAsyncThunk(
+    'auth/login', 
+    async (formData,{rejectWithValue})=>{
+        try{
+        const response = await axios.post('http://localhost:8080/api/auth/login',
+             formData,{
+                headers:{
+                    'Content-Type':'application/json'
+                }
+        })
+        return response.data
+            }catch(error){
+                toast(error.response.data.message,{
+                    style: {
+                      border:'1px solid red',  
+                      background:'red',
+                      color:'white'
+                    }
+                  })
+                return rejectWithValue(error.response.data);
+        }
+    })
+
 
 const authSlice = createSlice({
     name: 'auth',
@@ -34,7 +64,8 @@ const authSlice = createSlice({
         }
     },
     extraReducers:(builder)=>{
-        builder.addCase(registerUser.pending, (state)=>{
+        builder
+        .addCase(registerUser.pending, (state)=>{
             state.isLoading = true
         })
         .addCase(registerUser.fulfilled, (state,action)=>{
@@ -47,6 +78,21 @@ const authSlice = createSlice({
             state.isAuthenticated = false
             state.user = null
         })
+        .addCase(loginUser.pending, (state)=>{
+            state.isLoading = true
+        })
+        .addCase(loginUser.fulfilled, (state,action)=>{
+            state.isLoading = false
+            state.isAuthenticated = true
+            state.user = action.payload
+        })
+        .addCase(loginUser.rejected, (state)=>{
+            state.isLoading = false
+            state.isAuthenticated = false
+            state.user = null
+        })
+
+
     }
     
 
