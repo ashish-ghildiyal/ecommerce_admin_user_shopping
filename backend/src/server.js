@@ -24,16 +24,18 @@ app.use(cors({
         'Expires',
         'Pragma'
     ],
-    credentials: true
+    credentials: true,
 }));
 
 app.use(express.json());
 
-const port = process.env.PORT || 4000;
+
 
 // Routes
 
 app.use('/api/auth', authRouter);
+
+const port = process.env.PORT || 4000;
 
 connectDB()
 

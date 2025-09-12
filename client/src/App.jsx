@@ -15,15 +15,26 @@ import ProductListing from "./pages/shopping-view/ProductListing"
 import CheckAuth from "./components/common/CheckAuth"
 import PageNotFound from "./pages/PageNotFound"
 import UnAuthorized from "./pages/unauth-page/UnAuthorized"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
+import { useEffect } from "react"
+import { checkAuthUser } from "./store/auth-slice"
+import Logout from "./components/common/Logout"
 
 function App() {
+  const {isAuthenticated, user, isLoading} = useSelector(state=>state.auth)
+ const dispatch = useDispatch();
 
-  const {isAuthenticated, user} = useSelector(state=>state.auth)
+ useEffect(()=>{
+  dispatch(checkAuthUser())
+ },[dispatch])
+
+ if(isLoading) return <div>loading...</div>
+
 
   return (
     <div className="flex flex-col overflow-hidden bg-white">
    <h1>Header</h1>
+   <Logout/>
    <Routes>
         <Route path='/auth' element={
           <CheckAuth isAuthenticated={isAuthenticated} user={user}>
@@ -53,8 +64,9 @@ function App() {
             <Route path="checkout" element={<Checkout/>}/>
             <Route path="product-listing" element={<ProductListing/>}/>
         </Route>
-        <Route path="*" element={<PageNotFound/>} />
+        
         <Route path="/unauthorized" element={<UnAuthorized/>} />
+        <Route path="*" element={<PageNotFound/>} />
    </Routes>
       
     </div>

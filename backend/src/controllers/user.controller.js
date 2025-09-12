@@ -1,6 +1,9 @@
 import {User} from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+
+
+
 //Register
 const registerUser = async(req,res)=>{
     const {userName, email, password} = req.body;
@@ -81,7 +84,6 @@ const LoginUser = async(req, res)=>{
             })
         }
 
-
         // compare password
         const isMatch = await bcrypt.compare(password, user.password);
         if(!isMatch){
@@ -102,10 +104,11 @@ const LoginUser = async(req, res)=>{
             process.env.JWT_SECRET, 
             {expiresIn: "1d"}
         );
+        console.log(token)
         res.cookie("token", token, {
             httpOnly: true,
-            secure: true,
-            sameSite: "none",
+            secure: false,
+            sameSite: "lax",
             maxAge: 24 * 60 * 60 * 1000
         });
 
@@ -121,9 +124,6 @@ const LoginUser = async(req, res)=>{
             role: user.role
         }
     });
-
-
-
         
     } catch (error) {
         console.log(error);
@@ -133,9 +133,57 @@ const LoginUser = async(req, res)=>{
         });
         
     }
-   
-
 } 
 
+// Logout
 
-export {registerUser, LoginUser}
+const LogoutUser =(req, res)=>{
+    try {
+        res.clearCookie("token",{
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // Only send over HTTPS in production
+      sameSite: "lax",
+    });  
+     res.status(200).json({
+        success:true,
+        message: 'Logout successfully'
+    })  
+} catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error logging out",
+    });
+}
+   
+
+}
+
+
+
+// auth middleware
+
+const AuthMiddleware =(req,res,next)=>{
+      const token = req?.cookies?.token
+        if(!token) return res.status(401).json({
+            success:false,
+            message: "Unauthorized user! No token found",
+        })
+    try {
+      
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
+        req.user = decoded;
+        next();
+
+        
+    } catch (error) {
+        res.status(401).json({
+            success:false,
+            message: 'Invalid or expired token!'
+        })
+        
+    }
+
+}
+
+
+export {registerUser, LoginUser, AuthMiddleware, LogoutUser}

@@ -14,7 +14,8 @@ const types = {
 const CommonForm = ({formControls, formData, setFormData, ButtonText, onSubmit}) => {
     const renderInputType=(getControlItem)=>{
         let element =null;
-        let value = formData[getControlItem.name];
+        let value = formData[getControlItem.name] || '';
+        console.log(value)
         const changeHandler =(e)=>{
             setFormData({...formData, [getControlItem.name]:e.target.value})
         }
