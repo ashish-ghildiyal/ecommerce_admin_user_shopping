@@ -4,6 +4,7 @@ import cors from 'cors';
 import connectDB from './db/db.js';
 import authRouter from './routes/user.route.js';
 import cookieParser from 'cookie-parser';
+import adminproductRoutes from './routes/admin/products.route.js';
 
 dotenv.config({
     path: 'src/config/.env'
@@ -34,6 +35,8 @@ app.use(express.json());
 // Routes
 
 app.use('/api/auth', authRouter);
+
+app.use('/api/admin/products', adminproductRoutes);
 
 const port = process.env.PORT || 4000;
 

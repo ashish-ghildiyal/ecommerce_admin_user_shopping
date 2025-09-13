@@ -1,23 +1,68 @@
 import { Button } from '@/components/ui/button'
-import React, {useState} from 'react'
-import {
-  Card,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card"
+import React, {useEffect, useState} from 'react'
+
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet"
 import CommonForm from '@/components/common/CommonForm'
 import { addProductFormElements,  } from '@/config'
+import ProductImageUpload from '@/components/admin/ProductImageUpload'
+import { useDispatch, useSelector } from 'react-redux'
+import { addNewProduct, getAllProducts } from '@/store/admin/products-slice'
+import { data } from 'react-router'
+import { toast } from 'sonner'
+import ProductTile from '@/components/admin/ProductTile'
+
+const initialState={
+  image: null,
+  title:'',
+  description:'',
+  category:'',
+  price:'',
+  salePrice:'',
+  brand:'',
+  totalStock: ''
+}
 
 const Products = () => {
   const [openProductFormDialog, setOpenProductFormDialog] = useState(false)
+  const [formData, setFormData] = useState(initialState )
+  const [imageFile, setImageFile] = useState(null)
+  const [uploadedImageUrl, setUploadedImageUrl] = useState('')
+  const [imageLoadingState, setImageLoadingState] = useState(false)
+
+  const dispatch = useDispatch();
+  const {products} = useSelector((state)=>state.adminProducts);
+ 
+
+  const onSubmit=(e)=>{
+    e.preventDefault()
+   dispatch(addNewProduct({
+      ...formData,
+      image: uploadedImageUrl.url,
+       price: Number(formData.price),
+    salePrice: Number(formData.salePrice),
+    totalStock: Number(formData.totalStock),
+
+    })).then(data=>{
+      if(data.payload.success){
+       dispatch(getAllProducts())
+        toast(data.payload.message)
+        setOpenProductFormDialog(false)
+        setImageFile(null)
+        setFormData(initialState)
+      }
+    })
+    
+
+  }
+
+  useEffect(()=>{
+    dispatch(getAllProducts())
+  },[dispatch])
   return (
     <>
     <div className="mb-5 w-full flex justify-end">
@@ -26,86 +71,39 @@ const Products = () => {
       </Button>
     </div>
     <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
-      <Card className="w-full max-w-sm mx-auto">
-        <CardContent>
-          <h2 className="text-xl font-bold mb-2 mt-2">title</h2>
-          <div className="flex justify-between items-center mb-2">
-            <span>price</span>
-            <span className="text-lg font-bold"> sale price </span>
-          </div>
-        </CardContent>
-        <CardFooter className="flex justify-between items-center">
-          <Button>Edit</Button>
-          <Button>Delete</Button>
-        </CardFooter>
-      </Card>
-       <Card className="w-full max-w-sm mx-auto">
-        <CardContent>
-          <h2 className="text-xl font-bold mb-2 mt-2">title</h2>
-          <div className="flex justify-between items-center mb-2">
-            <span>price</span>
-            <span className="text-lg font-bold"> sale price </span>
-          </div>
-        </CardContent>
-        <CardFooter className="flex justify-between items-center">
-          <Button>Edit</Button>
-          <Button>Delete</Button>
-        </CardFooter>
-      </Card>
-       <Card className="w-full max-w-sm mx-auto">
-        <CardContent>
-          <h2 className="text-xl font-bold mb-2 mt-2">title</h2>
-          <div className="flex justify-between items-center mb-2">
-            <span>price</span>
-            <span className="text-lg font-bold"> sale price </span>
-          </div>
-        </CardContent>
-        <CardFooter className="flex justify-between items-center">
-          <Button>Edit</Button>
-          <Button>Delete</Button>
-        </CardFooter>
-      </Card>
-       <Card className="w-full max-w-sm mx-auto">
-        <CardContent>
-          <h2 className="text-xl font-bold mb-2 mt-2">title</h2>
-          <div className="flex justify-between items-center mb-2">
-            <span>price</span>
-            <span className="text-lg font-bold"> sale price </span>
-          </div>
-        </CardContent>
-        <CardFooter className="flex justify-between items-center">
-          <Button>Edit</Button>
-          <Button>Delete</Button>
-        </CardFooter>
-      </Card>
-       <Card className="w-full max-w-sm mx-auto">
-        <CardContent>
-          <h2 className="text-xl font-bold mb-2 mt-2">title</h2>
-          <div className="flex justify-between items-center mb-2">
-            <span>price</span>
-            <span className="text-lg font-bold"> sale price </span>
-          </div>
-        </CardContent>
-        <CardFooter className="flex justify-between items-center">
-          <Button>Edit</Button>
-          <Button>Delete</Button>
-        </CardFooter>
-      </Card>
+      { products.data && products.data.length > 0 ?
+        products.data.map((product,)=>( 
+        <ProductTile product={product} key={product._id}/>
+       ))
+       : <p>No products found</p>
+      }
+      
+       
+       
      </div>
      <Sheet open={openProductFormDialog} onOpenChange={setOpenProductFormDialog}>
-  <SheetTrigger>Open</SheetTrigger>
-  <SheetContent>
+  <SheetContent className='max-h-screen overflow-y-auto pb-10'>
     <SheetHeader>
-      <SheetTitle>Are you absolutely sure?</SheetTitle>
-      <SheetDescription>
-        This action cannot be undone. This will permanently delete your account
-        and remove your data from our servers.
-      </SheetDescription>
-      
+      <SheetTitle>Add Product</SheetTitle>
     </SheetHeader>
-    {/* <CommonForm 
-      formControls={loginFormControl}
-    /> */}
+    <ProductImageUpload 
+        imageFile ={imageFile}
+        setImageFile={setImageFile}
+        uploadedImageUrl={uploadedImageUrl}
+        setUploadedImageUrl={setUploadedImageUrl}
+        imageLoadingState={imageLoadingState}
+        setImageLoadingState={setImageLoadingState}
+    />
+    <div className='px-3'>
+      <CommonForm 
+       formControls={addProductFormElements}
+       formData={formData}
+       setFormData={setFormData}
+       ButtonText={'Add Product'}
+       onSubmit={onSubmit}
+      />
+    </div>
+   
   </SheetContent>
 </Sheet>
     </>

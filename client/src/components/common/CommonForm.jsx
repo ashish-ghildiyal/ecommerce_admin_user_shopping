@@ -2,7 +2,8 @@ import React from 'react'
 import { Label } from '@radix-ui/react-label'
 import { Input } from '../ui/input'
 import { Textarea } from '../ui/textarea'
-import { Select, SelectContent, SelectTrigger, SelectValue , SelectItem} from '../ui/select'
+import { Select, SelectContent, 
+SelectTrigger, SelectValue , SelectItem} from '../ui/select'
 import { Button } from '../ui/button'
 
 const types = {
@@ -14,8 +15,7 @@ const types = {
 const CommonForm = ({formControls, formData, setFormData, ButtonText, onSubmit}) => {
     const renderInputType=(getControlItem)=>{
         let element =null;
-        let value = formData[getControlItem.name] || '';
-        console.log(value)
+        let value = formData[getControlItem.name];
         const changeHandler =(e)=>{
             setFormData({...formData, [getControlItem.name]:e.target.value})
         }
@@ -42,16 +42,18 @@ const CommonForm = ({formControls, formData, setFormData, ButtonText, onSubmit})
              case types.Select:
                 element = <Select value={value} 
                  onValueChange={(selectedValue) =>
-              setFormData({ ...formData, [getControlItem.name]: selectedValue })
-            }>
+                 setFormData({ ...formData, [getControlItem.name]: selectedValue })
+                 }>
                     <SelectTrigger className='w-full'>
-                        <SelectValue placeholder={getControlItem.placeholder} />
+                        <SelectValue placeholder={getControlItem.label} />
                     </SelectTrigger>
                     <SelectContent>
                         {
                             getControlItem.options &&
-                            getControlItem.options.length >0 ?
-                            getControlItem.options.map((option)=><SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>)
+                            getControlItem.options.length > 0 ?
+                            getControlItem.options.map((option)=>(
+                            <SelectItem key={option.value} 
+                            value={option.value}>{option.label}</SelectItem>))
                             : null
                         }
                     </SelectContent>
