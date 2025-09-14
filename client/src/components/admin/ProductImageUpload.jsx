@@ -8,10 +8,10 @@ import axios from 'axios';
 const ProductImageUpload = ({
     imageFile,
     setImageFile,
-    uploadedImageUrl,
     setUploadedImageUrl, 
     imageLoadingState,
-    setImageLoadingState
+    setImageLoadingState,
+    isEditMode
 }) => {
         const inputRef = useRef(null);
         const imageChange=(e)=>{
@@ -50,8 +50,8 @@ const ProductImageUpload = ({
                     'Content-Type': 'multipart/form-data'
                 }
             })
-            if(response) {
-                const imageUrl = response.data;
+            if(response?.data?.success){ 
+                const imageUrl = response.data.url;
                 setUploadedImageUrl(imageUrl);
                 setImageLoadingState(false)
             }
@@ -67,19 +67,24 @@ const ProductImageUpload = ({
     <div className='w-full max-w-md mx-auto px-3'>
         <Label htmlFor="image-upload" className="text-lg font-semibold mb-2">Upload Image</Label>
         <div 
-        onDragOver={handleDragOver}
-        onDrop={handleDrop}
-        className='border-2 border-dashed rounded-lg p-4 mt-4'>
-            <Input id="image-upload" type="file" className="w-full" hidden  ref={inputRef} 
-            onChange={imageChange}/>
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+
+                className={`${isEditMode?'opacity-50 border-2 border-dashed':'border-2 border-dashed rounded-lg p-4 mt-4'}`}>
+            <Input id="image-upload" type="file" 
+            className="w-full" 
+            hidden  
+            ref={inputRef} 
+            onChange={imageChange}
+            disabled={isEditMode}
+            />
             {
-                !imageFile ? 
-                <Label htmlFor="image-upload" 
-                className="flex flex-col items-center justify-center h-32 cursor-pointer">
+            !imageFile ? 
+                (<Label htmlFor="image-upload" 
+                className='flex flex-col items-center justify-center h-32 cursor-pointer'>
                    <CloudUploadIcon className='w-10 h-10'/>
                    <span>Drag & Drop, or browse</span>
-                </Label> :(imageLoadingState ? 'Uploading Image...' : 
-
+                </Label>) :(imageLoadingState ? 'Uploading Image...' : 
 
                  <div className="flex items-center justify-center "> 
                  <div className='flex items-center justify-center'>

@@ -6,7 +6,7 @@ const productRoutes = express.Router();
 
 productRoutes.post('/upload', upload.single('image_file'), handleImageUpload)
 productRoutes.post('/add', addProduct)
-productRoutes.put('/update/:id', updateProduct)
+productRoutes.put('/edit/:id', updateProduct)
 productRoutes.get('/fetch', fetchProducts)
 productRoutes.delete('/delete/:id', deleteProduct)  
 

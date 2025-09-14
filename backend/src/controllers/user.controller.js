@@ -139,9 +139,9 @@ const LoginUser = async(req, res)=>{
 
 const LogoutUser =(req, res)=>{
     try {
-        res.clearCookie("token",{
+    res.clearCookie("token",{
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Only send over HTTPS in production
+      secure: true, // Only send over HTTPS in production
       sameSite: "lax",
     });  
      res.status(200).json({

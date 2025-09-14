@@ -94,7 +94,7 @@ const updateProduct= async(req,res)=>{
 
 const fetchProducts= async(req,res)=>{
     try {
-        const products = await Product.find();
+        const products = await Product.find({});
         if(!products){
             return res.status(400).json({
                 success: false,

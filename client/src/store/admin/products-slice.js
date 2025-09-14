@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const initialState={
     isLoading:false,
-    products:[]
+    products: []
 }
 
 export const addNewProduct = createAsyncThunk(
@@ -16,7 +16,7 @@ export const addNewProduct = createAsyncThunk(
                    "Content-Type": "application/json",
                 }
              })
-        return response.data
+        return response?.data
             }catch(error){
                 return rejectWithValue(error.response.data);
         }
@@ -33,7 +33,7 @@ export const editProduct = createAsyncThunk(
                   "Content-Type": "application/json",
                 }
              })
-        return response.data
+        return response?.data
             }catch(error){
                 return rejectWithValue(error.response.data);
         }
@@ -42,15 +42,9 @@ export const editProduct = createAsyncThunk(
 
 export const deleteProduct = createAsyncThunk(
     'products/delete-product', 
-    async ({id},{rejectWithValue})=>{
+    async (id,{rejectWithValue})=>{
         try{
-            
-        const response = await axios.delete(`http://localhost:8080/api/admin/products/delete/${id}`,
-             {
-                headers: {
-                  "Content-Type": "application/json",
-                }
-             })
+        const response = await axios.delete(`http://localhost:8080/api/admin/products/delete/${id}`)
         return response.data
             }catch(error){
                 return rejectWithValue(error.response.data);
@@ -64,7 +58,7 @@ export const getAllProducts = createAsyncThunk(
     async (_,{rejectWithValue})=>{
         try{
         const response = await axios.get('http://localhost:8080/api/admin/products/fetch')
-        return response.data
+        return response?.data
             }catch(error){
                 return rejectWithValue(error.response.data);
         }
@@ -118,7 +112,7 @@ const AdminProductsSlice = createSlice({
         })
         .addCase(getAllProducts.fulfilled, (state,action)=>{
             state.isLoading = false
-            state.products = action.payload
+            state.products = action?.payload?.data
         })
         .addCase(getAllProducts.rejected, (state)=>{
             state.isLoading = false
