@@ -62,7 +62,7 @@ function App() {
             <Route path="home" element={<HomeShopping/>} />
             <Route path="account" element={<Account/>}/>
             <Route path="checkout" element={<Checkout/>}/>
-            <Route path="product-listing" element={<ProductListing/>}/>
+            <Route path="listing" element={<ProductListing/>}/>
         </Route>
         
         <Route path="/unauthorized" element={<UnAuthorized/>} />

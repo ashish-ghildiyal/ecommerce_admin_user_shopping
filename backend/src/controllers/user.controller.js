@@ -98,7 +98,8 @@ const LoginUser = async(req, res)=>{
             {
                 id: user._id,
                 email: user.email,
-                role: user.role
+                role: user.role,
+                userName: user.userName
 
             }, 
             process.env.JWT_SECRET, 
@@ -169,7 +170,6 @@ const AuthMiddleware =(req,res,next)=>{
             message: "Unauthorized user! No token found",
         })
     try {
-      
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
         req.user = decoded;
         next();

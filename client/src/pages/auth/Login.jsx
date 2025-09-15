@@ -20,7 +20,6 @@ const Login = () => {
     e.preventDefault()
     dispatch(loginUser(formData))
     .then((data)=>{
-      console.log(data)
      if(data.payload.success){
       toast(data.payload.message,{
         style: {
