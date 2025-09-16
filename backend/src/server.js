@@ -5,6 +5,7 @@ import connectDB from './db/db.js';
 import authRouter from './routes/user.route.js';
 import cookieParser from 'cookie-parser';
 import adminproductRoutes from './routes/admin/products.route.js';
+import shoppingproductRoutes from './routes/shop/products.route.js';
 
 dotenv.config({
     path: 'src/config/.env'
@@ -37,6 +38,9 @@ app.use(express.json());
 app.use('/api/auth', authRouter);
 
 app.use('/api/admin/products', adminproductRoutes);
+
+// Shopping Routes
+app.use('/api/shopping/products', shoppingproductRoutes);
 
 const port = process.env.PORT || 4000;
 
